@@ -5,7 +5,7 @@ Serial serial;
 MQTTClient client;
 
 String applicationId = "microbit1"; //personal for your application
-String portName = "/dev/cu.usbmodem1422";  //explicit port like COM1 or /dev/cu.usbmodem1422 for your application
+String portName = null;  //explicit port like COM1 or /dev/cu.usbmodem1422 for your application
 String mqttHost = "127.0.0.1";
 String mqttUser = "user";
 String mqttPass = "pass";
@@ -20,7 +20,7 @@ void setup()
       exit();
       return;
   }
-  
+
   // no specific port specified take the first
   if(portName == null) {
     println("[DEBUG] available ports:");
@@ -29,10 +29,10 @@ void setup()
     }
     portName = ports[0];
   }
-               
-  //               
+
+  //
   println("[DEBUG] reading from: " + portName);
-  
+
   serial = new Serial(this, portName, 115200);
   client = new MQTTClient(this);
   client.connect("mqtt://" + mqttUser + ":" + mqttPass + "@" + mqttHost, "processing");
@@ -42,15 +42,15 @@ void setup()
 //main run loop called as often as possible
 void draw()
 {
-  if(serial.available() > 0) 
-  {  
+  if(serial.available() > 0)
+  {
     String s = serial.readStringUntil('\r');
     if (s != null) {
       String command = s.trim();
       client.publish("/out/" + applicationId, command);
       println("[DEBUG] out: " + command);
     }
-  } 
+  }
 }
 
 //keyboard event
